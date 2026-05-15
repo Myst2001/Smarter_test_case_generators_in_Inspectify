@@ -1,0 +1,4 @@
+l := h ;
+if false -> l := 0
+[] true -> skip
+fi

@@ -34,7 +34,7 @@
       <JobPane />
     </div>
   {/if}
-
+  <!-- Shows the background compilation output (disabled) 
   {#if compilationStatus.status && compilationStatus.status.state != 'Succeeded'}
     <div class="absolute inset-0 mt-20 grid items-start justify-center">
       <div
@@ -68,6 +68,7 @@
       </div>
     </div>
   {/if}
+-->
 </div>
 
 <StatusBar />

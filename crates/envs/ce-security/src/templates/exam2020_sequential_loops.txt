@@ -1,0 +1,4 @@
+i := 0 ;
+do i < n -> N[i] := N[i] + 27 ; i := i + 1 od ;
+j := 0 ;
+do j < m -> M[j] := M[j] + 33 ; j := j + 1 od

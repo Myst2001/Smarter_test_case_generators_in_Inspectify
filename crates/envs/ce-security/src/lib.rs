@@ -1,16 +1,14 @@
 mod analysis;
+pub mod generator;
+pub mod generator_old;
+
+pub use generator::{generate_input_new, generate_input_old};
 
 use std::collections::{BTreeMap, BTreeSet};
 
 use analysis::{Security, SecurityLattice};
-use ce_core::{
-    Env, Generate, ValidationResult, define_env,
-    rand::{self, seq::IndexedRandom},
-};
-use gcl::{
-    ast::{Commands, Target, TargetDef, Variable},
-    memory::Memory,
-};
+use ce_core::{Env, Generate, ValidationResult, define_env, rand};
+use gcl::ast::{Commands, Target, TargetDef, Variable};
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use stdx::stringify::Stringify;
@@ -168,59 +166,6 @@ impl Generate for Input {
     type Context = ();
 
     fn gn<R: rand::Rng>(_cx: &mut Self::Context, rng: &mut R) -> Self {
-        let commands = Commands::gn(&mut Default::default(), rng);
-
-        let lattice_options = [
-            // public < private
-            vec![flow("public", "private")],
-            // unclassified < classified, classified < secret, secret < top_secret
-            vec![
-                flow("unclassified", "classified"),
-                flow("classified", "secret"),
-                flow("secret", "top_secret"),
-            ],
-            // trusted < dubious
-            vec![flow("trusted", "dubious")],
-            // known_facts < conjecture, conjecture < alternative_facts
-            vec![
-                flow("known_facts", "conjecture"),
-                flow("conjecture", "alternative_facts"),
-            ],
-            // low < high
-            vec![flow("low", "high")],
-            // clean < Facebook, clean < Google, clean < Microsoft
-            vec![
-                flow("clean", "Facebook"),
-                flow("clean", "Google"),
-                flow("clean", "Microsoft"),
-            ],
-        ];
-
-        let lattice = SecurityLatticeInput {
-            rules: lattice_options.choose(rng).unwrap().clone(),
-        };
-        let classes = lattice
-            .rules
-            .iter()
-            .flat_map(|f| [f.from.clone(), f.into.clone()])
-            .sorted()
-            .dedup()
-            .collect_vec();
-
-        let classification = Memory::from_targets_with(
-            commands.fv(),
-            rng,
-            |rng, _| classes.choose(rng).unwrap().clone(),
-            |rng, _| classes.choose(rng).unwrap().clone(),
-        )
-        .iter()
-        .map(|r| (r.target().name().to_string(), r.value().clone()))
-        .collect();
-
-        Input {
-            commands: Stringify::new(commands),
-            classification,
-            lattice,
-        }
+        generator::generate_input(rng)
     }
 }

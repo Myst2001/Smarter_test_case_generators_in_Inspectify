@@ -3,3 +3,9 @@
 inspectify-binaries/
 .env
 /z3-versions
+
+# Generated LLVM/coverage batches (regenerate via ce-security Coverage scripts)
+crates/envs/ce-security/src/Coverage/results/
+
+# OneDrive "online-only" placeholder: Git cannot index it (Windows read error / os error 362)
+crates/envs/ce-capitalize/tests/capitalize_every_other_word

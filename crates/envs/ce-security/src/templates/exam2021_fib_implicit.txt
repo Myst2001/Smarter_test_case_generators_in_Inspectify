@@ -1,0 +1,7 @@
+y := 1 ;
+z := 1 ;
+zz := 1 ;
+if x = 1 -> skip
+[] x > 1 ->
+do x > 2 -> x := x - 1 ; zz := z ; z := y + z ; y := zz od
+fi
